@@ -2,6 +2,7 @@
 
 const express = require("express");
 const { BadRequestError } = require("../expressError");
+const { NotFoundError } = require("../expressError");
 
 const router = new express.Router();
 const db = require("../fakeDb");
@@ -30,9 +31,42 @@ router.post("/", function (req, res, next) {
 
 });
 
+
+/** GET /items/:name -- returns json of item in url params if successful. If
+ * not successful, throws Not Found 404 error.
+ */
 router.get("/:name", function (req, res, next) {
-  // Add error catching if not in items
-  const currItem =
+  //
+  const currItem = db.items.find(item => item.name === req.params.name);
+
+  if (currItem === undefined) {
+    throw new NotFoundError();
+  }
+
+  res.json(currItem);
+
 });
+
+/** PATCH /items/:name -- updates an item in the db and returns modified item
+ * as json if successful. If not successful, throws Not Found 404 error.
+ */
+router.patch("/:name", function (req, res, next) {
+
+  // Add error catching
+
+  // .find array method
+  const currItem = db.items.find(item => item.name === req.params.name);
+  currItem.name = req.body.name;
+  currItem.price = req.body.price;
+
+  res.json(currItem);
+
+});
+
+/**DELETE /items/:name -- deletes item from the db and returns
+ * {message: "Deleted"} if successful. If not successful, throws Not Found 404
+ * error. */
+
+
 
 module.exports = router;
