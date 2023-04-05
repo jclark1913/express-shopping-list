@@ -36,7 +36,7 @@ router.post("/", function (req, res, next) {
  * not successful, throws Not Found 404 error.
  */
 router.get("/:name", function (req, res, next) {
-  //
+
   const currItem = db.items.find(item => item.name === req.params.name);
 
   if (currItem === undefined) {
@@ -53,9 +53,12 @@ router.get("/:name", function (req, res, next) {
 router.patch("/:name", function (req, res, next) {
 
   // Add error catching
-
-  // .find array method
   const currItem = db.items.find(item => item.name === req.params.name);
+
+  if (currItem === undefined) {
+    throw new NotFoundError();
+  }
+
   currItem.name = req.body.name;
   currItem.price = req.body.price;
 
@@ -66,6 +69,20 @@ router.patch("/:name", function (req, res, next) {
 /**DELETE /items/:name -- deletes item from the db and returns
  * {message: "Deleted"} if successful. If not successful, throws Not Found 404
  * error. */
+router.delete("/:name", function (req, res, next) {
+
+  const currItem = db.items.find(item => item.name === req.params.name);
+
+  if (currItem === undefined) {
+    throw new NotFoundError();
+  }
+
+  const index = db.items.indexOf(currItem);
+  db.items.splice(index, 1);
+
+  res.json({message: "Deleted"})
+
+});
 
 
 
