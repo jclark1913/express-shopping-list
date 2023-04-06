@@ -59,6 +59,10 @@ router.patch("/:name", function (req, res, next) {
     throw new NotFoundError();
   }
 
+  if (req.body.name === undefined || req.body.price === undefined) {
+    throw new BadRequestError();
+  }
+
   currItem.name = req.body.name;
   currItem.price = req.body.price;
 
@@ -80,7 +84,7 @@ router.delete("/:name", function (req, res, next) {
   const index = db.items.indexOf(currItem);
   db.items.splice(index, 1);
 
-  res.json({message: "Deleted"})
+  res.json({ message: "Deleted" });
 
 });
 
